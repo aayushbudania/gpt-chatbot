@@ -7,6 +7,7 @@ function App() {
   const [messages, setMessages] = useState([]);
 
   const handleMessageSubmit = async () => {
+    console.log("Inside handleMessageSubmit function");
     const response = await sendMessageToOpenAI(input);
     setMessages([
       ...messages,
@@ -14,6 +15,7 @@ function App() {
       { text: response, isUser: false },
     ]);
     setInput("");
+    console.log("MESSAGES:", messages);
   };
 
   return (

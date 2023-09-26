@@ -1,14 +1,28 @@
 import { useState } from "react";
-import { sendMessageToOpenAI } from "./axios";
+import { sendMessageToOpenAI } from "./openai";
 import "./App.css";
+import { sendMessageToBard } from "./bard";
+import { getBardResponse } from "./bardApi";
 
 function App() {
-  const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [input, setInput] = useState(""); // Question asked by the user
+  const [messages, setMessages] = useState([]); // List of messages include user and bot response
 
-  const handleMessageSubmit = async () => {
-    console.log("Inside handleMessageSubmit function");
-    const response = await sendMessageToOpenAI(input);
+  /*OpenAI Chat Completion API*/
+  const handleMessageSubmit = async () => { 
+    const response = await sendMessageToOpenAI(input); // makes api call to openAi completions api
+    setMessages([
+      ...messages,
+      { text: input, isUser: true }, // user's question
+      { text: response, isUser: false }, // bot's response
+    ]);
+    setInput("");
+    console.log("MESSAGES:", messages);
+  };
+
+  const handleMessageSubmitBard = async () => { 
+    // const response = await sendMessageToBard(input); 
+    const response = await getBardResponse(input); 
     setMessages([
       ...messages,
       { text: input, isUser: true },
@@ -20,7 +34,7 @@ function App() {
 
   return (
     <div className="App">
-      <div className="chat">
+      <div className="chat-container">
         {messages.map((message, index) => (
           <div
             key={index}
@@ -36,7 +50,7 @@ function App() {
           value={input}
           onChange={(e) => setInput(e.target.value)}
         />
-        <button onClick={handleMessageSubmit}>Send</button>
+        <button onClick={handleMessageSubmitBard}>Send</button>
       </div>
     </div>
   );
